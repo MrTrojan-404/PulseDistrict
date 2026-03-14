@@ -87,6 +87,17 @@ void UNexusMenuWidget::NativeConstruct()
         HostingBackButton->OnClicked.AddDynamic(
             this, &UNexusMenuWidget::HandleBackClicked);
 
+    if (EditProfileButton)
+        EditProfileButton->OnClicked.AddDynamic(this, &UNexusMenuWidget::HandleEditProfileClicked);
+
+    if (SaveProfileButton)
+        SaveProfileButton->OnClicked.AddDynamic(this, &UNexusMenuWidget::HandleSaveProfileClicked);
+
+    if (ProfileBackButton)
+        ProfileBackButton->OnClicked.AddDynamic(this, &UNexusMenuWidget::HandleBackClicked);
+
+    Sub->OnProfileFetched.AddDynamic(this, &UNexusMenuWidget::HandleProfileFetchedLocal);
+
     if (LANCheckBox)
     {
         // Seed from subsystem's current mode
@@ -498,4 +509,54 @@ void UNexusMenuWidget::HandleLANCheckboxChanged(bool bIsChecked)
         bShowCode ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 
     NEXUS_LOG("[MenuWidget] LAN mode: %s", bIsChecked ? TEXT("ON") : TEXT("OFF"));
+}
+
+void UNexusMenuWidget::ShowProfile()
+{
+    if (MenuSwitcher) MenuSwitcher->SetActiveWidgetIndex(4);
+    SetButtonsEnabled(true);
+}
+
+void UNexusMenuWidget::HandleEditProfileClicked()
+{
+    if (UNexusMultiplayerSubsystem* Sub = GetSubsystem())
+    {
+        ShowLoading(TEXT("Loading Profile..."));
+        Sub->FetchUserProfile(Sub->GetLocalUserId());
+    }
+}
+
+void UNexusMenuWidget::HandleProfileFetchedLocal(bool bSuccess, FNexusUserProfile Profile)
+{
+    // Only intercept this if we were loading the profile editor 
+    // (prevents the menu from stealing the data when hovering in-game)
+    if (MenuSwitcher && MenuSwitcher->GetActiveWidgetIndex() == 3) // 3 is Loading
+    {
+        if (AgeInputBox)
+            AgeInputBox->SetText(FText::AsNumber(Profile.Age));
+            
+        if (AboutMeInputBox)
+            AboutMeInputBox->SetText(FText::FromString(Profile.AboutMe));
+            
+        ShowProfile();
+    }
+}
+
+void UNexusMenuWidget::HandleSaveProfileClicked()
+{
+    if (UNexusMultiplayerSubsystem* Sub = GetSubsystem())
+    {
+        FNexusUserProfile Profile;
+        if (AgeInputBox)
+            Profile.Age = FCString::Atoi(*AgeInputBox->GetText().ToString());
+
+        if (AboutMeInputBox)
+            Profile.AboutMe = AboutMeInputBox->GetText().ToString();
+
+        ShowLoading(TEXT("Saving Profile..."));
+        Sub->SaveUserProfile(Profile);
+        
+        ShowMain(); 
+        SetStatus(TEXT("Profile Saved"), FLinearColor::Green);
+    }
 }

@@ -109,6 +109,26 @@ public:
     UPROPERTY(meta = (BindWidgetOptional))
     TObjectPtr<UCheckBox> LANCheckBox;
 
+    // ── Profile Bindings (Optional) ───────────────────────────────────────────
+    
+    // Button on the Main Menu to open the Profile editor
+    UPROPERTY(meta = (BindWidgetOptional))
+    TObjectPtr<UButton> EditProfileButton;
+
+    // Inputs inside Panel 4 (Profile)
+    UPROPERTY(meta = (BindWidgetOptional))
+    TObjectPtr<UEditableTextBox> AgeInputBox;
+
+    UPROPERTY(meta = (BindWidgetOptional))
+    TObjectPtr<UEditableTextBox> AboutMeInputBox;
+
+    UPROPERTY(meta = (BindWidgetOptional))
+    TObjectPtr<UButton> SaveProfileButton;
+
+    UPROPERTY(meta = (BindWidgetOptional))
+    TObjectPtr<UButton> ProfileBackButton;
+
+    
     // ── Config ────────────────────────────────────────────────────────────────
 
     // Assign your WBP_NexusServerRow Blueprint subclass here
@@ -179,4 +199,10 @@ private:
 
     UFUNCTION()
     void HandleLANCheckboxChanged(bool bIsChecked);
+
+    void ShowProfile();
+    UFUNCTION() void HandleEditProfileClicked();
+    UFUNCTION() void HandleSaveProfileClicked();
+
+    UFUNCTION() void HandleProfileFetchedLocal(bool bSuccess, FNexusUserProfile Profile);
 };

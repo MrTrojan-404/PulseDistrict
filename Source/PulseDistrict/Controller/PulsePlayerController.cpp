@@ -2,6 +2,23 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerState.h"
 #include "Core/NexusMultiplayerSubsystem.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+
+void APulsePlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	// Cast to the Enhanced Input Component
+	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent))
+	{
+		// Bind the Inspect Action to our Raycast function
+		if (InspectAction)
+		{
+			EnhancedInput->BindAction(InspectAction, ETriggerEvent::Started, this, &APulsePlayerController::InspectPlayerProfile);
+		}
+	}
+}
 
 void APulsePlayerController::InspectPlayerProfile()
 {
@@ -96,3 +113,4 @@ void APulsePlayerController::Client_ReceiveChatMessage_Implementation(const FStr
 	// 4. We are now back on the local client. Broadcast the delegate so UMG can update the UI.
 	OnChatMessageReceived.Broadcast(SenderName, Message);
 }
+

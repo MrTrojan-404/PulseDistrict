@@ -16,6 +16,9 @@ public class PulseDistrict : ModuleRules
 			"EnhancedInput",  
 			"OnlineSubsystem",    
 			"OnlineSubsystemUtils",
+			"UMG",
+			"Slate",
+			"SlateCore",
 		});
 		
 		PrivateDependencyModuleNames.AddRange(new string[] { "NexusMultiplayer" });
