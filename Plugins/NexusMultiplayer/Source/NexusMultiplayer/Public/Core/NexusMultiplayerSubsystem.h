@@ -8,6 +8,7 @@
 #include "OnlineSessionSettings.h"
 #include "NexusMultiplayerSubsystem.generated.h"
 
+class INexusProfileInterface;
 class INexusOnlineInterface;
 class INexusBackendInterface;
 class INexusMatchCodeInterface;
@@ -138,6 +139,18 @@ public:
  
     UPROPERTY(BlueprintAssignable, Category = "Nexus|Events")
     FNexusOnSessionStateChanged OnSessionStateChanged;
+
+    UFUNCTION(BlueprintCallable, Category = "Nexus|Profile")
+    void SaveUserProfile(FNexusUserProfile Profile);
+
+    UFUNCTION(BlueprintCallable, Category = "Nexus|Profile")
+    void FetchUserProfile(const FString& UserId);
+
+    UPROPERTY(BlueprintAssignable, Category = "Nexus|Events")
+    FNexusOnProfileSaved OnProfileSaved;
+
+    UPROPERTY(BlueprintAssignable, Category = "Nexus|Events")
+    FNexusOnProfileFetched OnProfileFetched;
     
 private:
     // ── Layer instances ───────────────────────────────────────────────────────
@@ -204,5 +217,7 @@ private:
 
     FTimerHandle DisplayNameRetryTimer;
     FString CachedDisplayName;
+
+    TSharedPtr<INexusProfileInterface> ProfileLayer;
 
 };

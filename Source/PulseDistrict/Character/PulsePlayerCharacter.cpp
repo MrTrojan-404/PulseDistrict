@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Character/PD_PlayerCharacter.h"
+#include "PulsePlayerCharacter.h"
 
 // Sets default values
-APD_PlayerCharacter::APD_PlayerCharacter()
+APulsePlayerCharacter::APulsePlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -12,21 +12,21 @@ APD_PlayerCharacter::APD_PlayerCharacter()
 }
 
 // Called when the game starts or when spawned
-void APD_PlayerCharacter::BeginPlay()
+void APulsePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void APD_PlayerCharacter::Tick(float DeltaTime)
+void APulsePlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
 // Called to bind functionality to input
-void APD_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void APulsePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 

@@ -218,6 +218,18 @@ enum class ENexusNetworkMode : uint8
     LAN      UMETA(DisplayName = "LAN")
 };
 
+USTRUCT(BlueprintType)
+struct FNexusUserProfile
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadWrite, Category = "Nexus|Profile")
+    int32 Age = 0;
+
+    UPROPERTY(BlueprintReadWrite, Category = "Nexus|Profile")
+    FString AboutMe;
+};
+
 // ─── Delegates ────────────────────────────────────────────────────────────────
 // Declared here so subsystem, widgets, and game code can bind without
 // circular includes. Always bind via the subsystem's UPROPERTY delegates.
@@ -278,4 +290,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
     FNexusOnLeaderboardError,
     const FString&, Error);
- 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNexusOnProfileSaved, bool, bSuccess);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNexusOnProfileFetched, bool, bSuccess, FNexusUserProfile, Profile);

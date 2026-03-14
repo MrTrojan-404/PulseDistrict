@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "PD_PlayerCharacter.generated.h"
+#include "PulsePlayerCharacter.generated.h"
 
 UCLASS()
-class PULSEDISTRICT_API APD_PlayerCharacter : public ACharacter
+class PULSEDISTRICT_API APulsePlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	APD_PlayerCharacter();
+	APulsePlayerCharacter();
 
 protected:
 	// Called when the game starts or when spawned

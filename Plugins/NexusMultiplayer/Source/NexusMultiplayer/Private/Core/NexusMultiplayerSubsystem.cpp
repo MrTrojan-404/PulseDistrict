@@ -22,6 +22,7 @@
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
 #include "OnlineSessionSettings.h"
+#include "Backend/Nakama/Profile/NexusNakamaProfile.h"
 #include "Interfaces/OnlineIdentityInterface.h"
 #include "Online/EOS/NexusEOSOnline.h"
 
@@ -186,6 +187,17 @@ void UNexusMultiplayerSubsystem::SelectLayers()
         NEXUS_LOG("[Subsystem] MatchCode layer: FNexusNakamaMatchCode");
         MatchCodeLayer = MakeShared<FNexusNakamaMatchCode>(
             NakamaBackend->GetClient(), NakamaBackend->GetSession());
+
+        // Setup Profile Layer
+        ProfileLayer = MakeShared<FNexusNakamaProfile>(NakamaBackend->GetClient(), NakamaBackend->GetSession());
+    
+        // Bind Delegates
+        ProfileLayer->OnProfileSaved = [this](bool bSuccess) {
+            OnProfileSaved.Broadcast(bSuccess);
+        };
+        ProfileLayer->OnProfileFetched = [this](bool bSuccess, const FNexusUserProfile& Profile) {
+            OnProfileFetched.Broadcast(bSuccess, Profile);
+        };
     }
    else if (S->OnlineMode == ENexusOnlineMode::Steam
           || S->OnlineMode == ENexusOnlineMode::EOS) 
@@ -200,6 +212,17 @@ void UNexusMultiplayerSubsystem::SelectLayers()
     }
 
     NEXUS_SUCCESS("[Subsystem] All layers selected");
+    
+}
+
+void UNexusMultiplayerSubsystem::SaveUserProfile(FNexusUserProfile Profile)
+{
+    if (ProfileLayer.IsValid()) ProfileLayer->SaveProfile(Profile);
+}
+
+void UNexusMultiplayerSubsystem::FetchUserProfile(const FString& UserId)
+{
+    if (ProfileLayer.IsValid()) ProfileLayer->FetchProfile(UserId);
 }
 
 void UNexusMultiplayerSubsystem::BindLayerDelegates()
