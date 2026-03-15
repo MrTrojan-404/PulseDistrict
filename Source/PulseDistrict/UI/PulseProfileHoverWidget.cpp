@@ -65,7 +65,6 @@ void UPulseProfileHoverWidget::HandleCloseClicked()
 {
 	SetVisibility(ESlateVisibility::Hidden);
 
-	// --- ADD THIS TO RETURN TO GAMEPLAY ---
 	if (APlayerController* PC = GetOwningPlayer())
 	{
 		FInputModeGameOnly InputMode;
