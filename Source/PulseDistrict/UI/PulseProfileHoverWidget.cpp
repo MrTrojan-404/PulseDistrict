@@ -39,29 +39,44 @@ void UPulseProfileHoverWidget::NativeDestruct()
 
 void UPulseProfileHoverWidget::HandleProfileFetchedRemote(bool bSuccess, FNexusUserProfile Profile)
 {
-	// If we are currently in the main menu editing our own profile, ignore this event here.
-    
 	if (!bSuccess)
 	{
 		SetVisibility(ESlateVisibility::Hidden);
 		return;
 	}
 
-	if (AgeText)
-	{
-		AgeText->SetText(FText::AsNumber(Profile.Age));
-	}
+	if (AgeText) AgeText->SetText(FText::AsNumber(Profile.Age));
+	if (AboutMeText) AboutMeText->SetText(FText::FromString(Profile.AboutMe));
 
-	if (AboutMeText)
-	{
-		AboutMeText->SetText(FText::FromString(Profile.AboutMe));
-	}
-
-	// Unhide the widget to show the data!
 	SetVisibility(ESlateVisibility::Visible);
+
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		FInputModeGameAndUI InputMode;
+		InputMode.SetWidgetToFocus(TakeWidget());
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        
+		PC->SetInputMode(InputMode);
+		PC->SetShowMouseCursor(true);
+	}
 }
 
 void UPulseProfileHoverWidget::HandleCloseClicked()
 {
 	SetVisibility(ESlateVisibility::Hidden);
+
+	// --- ADD THIS TO RETURN TO GAMEPLAY ---
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		FInputModeGameOnly InputMode;
+		PC->SetInputMode(InputMode);
+		PC->SetShowMouseCursor(false);
+	}
+}
+void UPulseProfileHoverWidget::SetTargetName(const FString& InName)
+{
+	if (NameText)
+	{
+		NameText->SetText(FText::FromString(InName));
+	}
 }

@@ -217,7 +217,27 @@ void UNexusMultiplayerSubsystem::SelectLayers()
 
 void UNexusMultiplayerSubsystem::SaveUserProfile(FNexusUserProfile Profile)
 {
-    if (ProfileLayer.IsValid()) ProfileLayer->SaveProfile(Profile);
+    // Grab the exact same ID that APlayerState will give other clients
+    FString PlayerStateId;
+    IOnlineSubsystem* OSS = IOnlineSubsystem::Get();
+    if (OSS && OSS->GetIdentityInterface().IsValid())
+    {
+        if (auto UniqueId = OSS->GetIdentityInterface()->GetUniquePlayerId(0))
+        {
+            PlayerStateId = UniqueId->ToString();
+        }
+    }
+    
+    // Fallback for Null OSS / LAN
+    if (PlayerStateId.IsEmpty()) 
+    {
+        PlayerStateId = FPlatformMisc::GetLoginId(); 
+    }
+
+    if (ProfileLayer.IsValid()) 
+    {
+        ProfileLayer->SaveProfile(PlayerStateId, Profile);
+    }
 }
 
 void UNexusMultiplayerSubsystem::FetchUserProfile(const FString& UserId)
@@ -674,6 +694,13 @@ void UNexusMultiplayerSubsystem::HandleAccountLoaded()
         auto* NakamaMatch = static_cast<FNexusNakamaMatchCode*>(MatchCodeLayer.Get());
         NakamaMatch->UpdateSession(NakamaBack->GetSession());
         NEXUS_LOG("[Subsystem] NakamaMatchCode session refreshed after login");
+
+        if (ProfileLayer.IsValid())
+        {
+            auto* NakamaProfile = static_cast<FNexusNakamaProfile*>(ProfileLayer.Get());
+            NakamaProfile->UpdateSession(NakamaBack->GetSession());
+            NEXUS_LOG("[Subsystem] NakamaProfile session refreshed");
+        }
     }
 
     if (!Name.IsEmpty())

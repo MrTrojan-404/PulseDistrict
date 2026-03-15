@@ -29,7 +29,7 @@ void FNexusNakamaProfile::UpdateSession(UNakamaSession* NewSession)
     Session = NewSession;
 }
 
-void FNexusNakamaProfile::SaveProfile(const FNexusUserProfile& Profile)
+void FNexusNakamaProfile::SaveProfile(const FString& StorageKey, const FNexusUserProfile& Profile)
 {
     if (!EnsureClientAndSession(TEXT("SaveProfile"))) return;
 
@@ -38,7 +38,7 @@ void FNexusNakamaProfile::SaveProfile(const FNexusUserProfile& Profile)
 
     FNakamaStoreObjectWrite WriteObj;
     WriteObj.Collection = TEXT("user_profiles");
-    WriteObj.Key = Session->SessionData.UserId;
+    WriteObj.Key = StorageKey; // <--- Use the APlayerState ID here!
     WriteObj.Value = Payload;
     WriteObj.PermissionRead = ENakamaStoragePermissionRead::PUBLIC_READ;
     WriteObj.PermissionWrite = ENakamaStoragePermissionWrite::OWNER_WRITE;

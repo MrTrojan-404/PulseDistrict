@@ -32,21 +32,26 @@ void UPulseChatWidget::NativeDestruct()
 
 void UPulseChatWidget::HandleTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+    APulsePlayerController* PC = Cast<APulsePlayerController>(GetOwningPlayer());
+    if (!PC) return;
+
+    // If the player presses Enter
     if (CommitMethod == ETextCommit::OnEnter)
     {
-        if (APulsePlayerController* PC = Cast<APulsePlayerController>(GetOwningPlayer()))
+        if (!Text.IsEmpty())
         {
             PC->SendChatMessage(Text.ToString());
-            
-            // Give input focus completely back to the game
-            PC->SetInputMode(FInputModeGameOnly());
-            PC->SetShowMouseCursor(false);
         }
-
-        if (ChatInputBox)
-        {
-            ChatInputBox->SetText(FText::GetEmpty());
-        }
+        
+        // Clear the box and close the chat
+        if (ChatInputBox) ChatInputBox->SetText(FText::GetEmpty());
+        PC->CloseChat();
+    }
+    // If the player presses Escape or clicks away from the box
+    else if (CommitMethod == ETextCommit::OnCleared || CommitMethod == ETextCommit::OnUserMovedFocus)
+    {
+        if (ChatInputBox) ChatInputBox->SetText(FText::GetEmpty());
+        PC->CloseChat();
     }
 }
 
@@ -54,16 +59,25 @@ void UPulseChatWidget::HandleChatMessageReceived(const FString& SenderName, cons
 {
     if (!ChatHistoryScrollBox) return;
 
-    // Dynamically create a Text Block for the new message
     UTextBlock* NewMessage = NewObject<UTextBlock>(this);
     FString FormattedMessage = FString::Printf(TEXT("[%s]: %s"), *SenderName, *Message);
     NewMessage->SetText(FText::FromString(FormattedMessage));
-    
-    // Ensure long messages wrap correctly
     NewMessage->SetAutoWrapText(true);
+    
+    // Apply the font you selected in the Widget Blueprint!
+    if (ChatFont.HasValidFont())
+    {
+        NewMessage->SetFont(ChatFont);
+    }
 
     ChatHistoryScrollBox->AddChild(NewMessage);
-    
-    // Automatically scroll to the bottom so the newest message is visible
     ChatHistoryScrollBox->ScrollToEnd();
+}
+
+void UPulseChatWidget::FocusChatInput()
+{
+    if (ChatInputBox)
+    {
+        ChatInputBox->SetKeyboardFocus();
+    }
 }

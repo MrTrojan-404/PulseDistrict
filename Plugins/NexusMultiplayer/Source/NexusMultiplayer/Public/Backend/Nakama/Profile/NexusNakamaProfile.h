@@ -17,7 +17,7 @@ public:
 	FNexusNakamaProfile(UNakamaClient* InClient, UNakamaSession* InSession);
 	~FNexusNakamaProfile();
 
-	virtual void SaveProfile(const FNexusUserProfile& Profile) override;
+	virtual void SaveProfile(const FString& StorageKey, const FNexusUserProfile& Profile) override;
 	virtual void FetchProfile(const FString& UserId) override;
 
 	// Called by subsystem when session refreshes

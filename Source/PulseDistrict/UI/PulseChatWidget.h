@@ -12,6 +12,14 @@ class PULSEDISTRICT_API UPulseChatWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	UFUNCTION(BlueprintCallable, Category = "Pulse|Chat")
+	void FocusChatInput();
+
+	// The box where the player types their message
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UEditableTextBox> ChatInputBox;
+	
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
@@ -20,10 +28,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UScrollBox> ChatHistoryScrollBox;
 
-	// The box where the player types their message
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UEditableTextBox> ChatInputBox;
-
+	UPROPERTY(EditDefaultsOnly, Category = "Pulse|UI")
+	FSlateFontInfo ChatFont;
+	
 private:
 	// Listens to the Player Controller for incoming messages
 	UFUNCTION()

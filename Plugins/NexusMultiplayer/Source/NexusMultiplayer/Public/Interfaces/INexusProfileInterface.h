@@ -10,7 +10,7 @@ class NEXUSMULTIPLAYER_API INexusProfileInterface
 public:
 	virtual ~INexusProfileInterface() = default;
 
-	virtual void SaveProfile(const FNexusUserProfile& Profile) = 0;
+	virtual void SaveProfile(const FString& StorageKey, const FNexusUserProfile& Profile) = 0;
 	virtual void FetchProfile(const FString& UserId) = 0;
 
 	TFunction<void(bool /*bSuccess*/)> OnProfileSaved;
