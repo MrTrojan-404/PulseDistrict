@@ -51,7 +51,7 @@ void UNexusMultiplayerSubsystem::Initialize(FSubsystemCollectionBase& Collection
             EOSLoginHandle = Identity->AddOnLoginCompleteDelegate_Handle(0,
                 FOnLoginCompleteDelegate::CreateUObject(this,
                     &UNexusMultiplayerSubsystem::HandleEOSLoginComplete));
-            Identity->Login(0, FOnlineAccountCredentials("persistentauth", "", "")); //use accountportal to auth on every launch
+            Identity->Login(0, FOnlineAccountCredentials("accountportal", "", "")); //use accountportal to auth on every launch
             return;
         }
     }

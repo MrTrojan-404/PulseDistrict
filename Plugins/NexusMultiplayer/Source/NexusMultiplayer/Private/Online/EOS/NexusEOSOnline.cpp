@@ -136,10 +136,10 @@ void FNexusEOSOnline::CreateSessionInternal(
     LastSessionSettings->bIsLANMatch             = bIsLAN;
     LastSessionSettings->NumPublicConnections     = NumPlayers;
     LastSessionSettings->bAllowJoinInProgress     = true;
-    LastSessionSettings->bAllowJoinViaPresence    = !bIsLAN && !bPrivate;
+    LastSessionSettings->bAllowJoinViaPresence    = false;
     LastSessionSettings->bShouldAdvertise         = !bPrivate;
     LastSessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
-    LastSessionSettings->bUsesPresence            = !bIsLAN;
+    LastSessionSettings->bUsesPresence            = false;
     LastSessionSettings->bUseLobbiesIfAvailable   = !bIsLAN; // EOS supports lobbies too
     LastSessionSettings->BuildUniqueId = 1;
     LastSessionSettings->Set(
@@ -182,10 +182,10 @@ void FNexusEOSOnline::FindSessions(int32 MaxResults)
     LastSessionSearch->MaxSearchResults = FMath::Clamp(MaxResults, 1, 200);
     LastSessionSearch->bIsLanQuery      = bIsLAN;
 
-    // EOS presence-based search — no SEARCH_LOBBIES filter needed unlike Steam
-    /*if (!bIsLAN)
-        LastSessionSearch->QuerySettings.Set(
-            SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);*/
+    if (!bIsLAN)
+    {
+        LastSessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
+    }
 
     if (!SessionInterface->FindSessions(*PlayerId, LastSessionSearch.ToSharedRef()))
     {
